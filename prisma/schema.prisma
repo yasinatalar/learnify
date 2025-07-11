@@ -1,0 +1,387 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model with subscription management
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  emailVerified DateTime?
+  
+  // Localization
+  locale        String    @default("en") // User's preferred locale (en, de)
+  
+  // Subscription & Usage
+  subscriptionTier  String @default("FREE")
+  subscriptionId    String?
+  customerId        String?
+  subscriptionExpiry DateTime?
+  
+  // Relationships
+  accounts    Account[]
+  sessions    Session[]
+  documents   Document[]
+  usage       UserUsage?
+  settings    UserSettings?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([locale])
+  @@map("users")
+}
+
+// NextAuth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// Document model with processing status
+model Document {
+  id          String            @id @default(cuid())
+  userId      String
+  title       String
+  content     String
+  originalName String
+  fileType    String
+  fileSize    Int
+  status      String  @default("UPLOADED")
+  
+  // File storage
+  filePath    String?          // Path to stored file
+  fileData    Bytes?           // Store file data directly in database
+  
+  // Processing metadata
+  wordCount   Int?
+  pageCount   Int?
+  language    String?
+  metadata    String?  // JSON string
+  
+  // Relationships
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashcards  Flashcard[]
+  quizzes     Quiz[]
+  summaries   Summary[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("documents")
+}
+
+// Summary model for AI-generated document summaries
+model Summary {
+  id          String    @id @default(cuid())
+  documentId  String
+  userId      String
+  title       String
+  content     String    // Main summary content
+  keyPoints   String    // JSON array of key points
+  
+  // Learning-optimized sections
+  overview    String?   // High-level overview
+  mainConcepts String?  // Core concepts explained
+  examples    String?   // Examples and case studies
+  takeaways   String?   // Key takeaways and action items
+  
+  // Additional comprehensive sections
+  prerequisites String? // Background knowledge needed
+  methodology   String? // Methods, processes, or approaches
+  applications  String? // Real-world applications and use cases
+  limitations   String? // Constraints, challenges, or limitations
+  futureDirections String? // Future implications and developments
+  criticalAnalysis String? // Critical evaluation and analysis
+  furtherReading String? // Additional resources and references
+  
+  // Metadata
+  wordCount   Int?
+  difficulty  String @default("MEDIUM")
+  estimatedReadTime Int? // in minutes
+  tags        String @default("") // Comma-separated tags
+  locale      String @default("en") // Content language (en, de)
+  
+  // AI generation metadata
+  aiProvider  String @default("openai") // "openai" or "anthropic"
+  model       String @default("gpt-4o")
+  tokensUsed  Int?
+  generationTime Int? // in seconds
+  
+  // Relationships
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([documentId])
+  @@index([userId])
+  @@index([locale])
+  @@map("summaries")
+}
+
+// Flashcard model with spaced repetition data
+model Flashcard {
+  id          String    @id @default(cuid())
+  documentId  String
+  question    String
+  answer      String
+  explanation String?
+  
+  // Spaced repetition (SM-2 algorithm)
+  interval    Int       @default(1)
+  repetition  Int       @default(0)
+  efactor     Float     @default(2.5)
+  nextReview  DateTime  @default(now())
+  
+  // Metadata
+  difficulty  String @default("MEDIUM")
+  tags        String     @default("")  // Comma-separated tags
+  locale      String @default("en") // Content language (en, de)
+  
+  // Relationships
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  reviews     FlashcardReview[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([documentId])
+  @@index([nextReview])
+  @@index([locale])
+  @@map("flashcards")
+}
+
+// Quiz model for interactive quizzes
+model Quiz {
+  id          String      @id @default(cuid())
+  userId      String
+  documentId  String?
+  title       String
+  description String?
+  difficulty  String  @default("MEDIUM")
+  timeLimit   Int?        // seconds per question
+  attempts    Int         @default(0)
+  lastAttemptAt DateTime?
+  metadata    String?     // JSON metadata
+  locale      String @default("en") // Content language (en, de)
+  
+  // Relationships
+  document    Document? @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  questions   QuizQuestion[]
+  quizAttempts QuizAttempt[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([documentId])
+  @@index([locale])
+  @@map("quizzes")
+}
+
+// Quiz question model
+model QuizQuestion {
+  id            String   @id @default(cuid())
+  quizId        String
+  question      String
+  options       String   // JSON string of multiple choice options
+  correctAnswer Int      // Index of correct answer
+  explanation   String?
+  difficulty    String @default("MEDIUM")
+  questionType  String   @default("MULTIPLE_CHOICE") // MULTIPLE_CHOICE, TRUE_FALSE, FILL_BLANK
+  points        Int      @default(1)
+  order         Int
+  tags          String   @default("") // Comma-separated tags
+  locale        String   @default("en") // Content language (en, de)
+  
+  // Relationships
+  quiz          Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([quizId])
+  @@index([locale])
+  @@map("quiz_questions")
+}
+
+// Quiz attempt tracking
+model QuizAttempt {
+  id           String   @id @default(cuid())
+  quizId       String
+  userId       String
+  score        Int      @default(0)
+  totalPoints  Int      @default(0)
+  accuracy     Float    @default(0.0)
+  totalTime    Int?     // in seconds
+  startedAt    DateTime
+  completedAt  DateTime
+  answers      String   // JSON array of answers
+  
+  // Relationships
+  quiz         Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([quizId])
+  @@index([userId])
+  @@map("quiz_attempts")
+}
+
+
+// Flashcard review tracking
+model FlashcardReview {
+  id           String   @id @default(cuid())
+  flashcardId  String
+  userId       String
+  rating       Int      // 1-5 rating for SM-2 algorithm
+  timeSpent    Int?     // in seconds
+  
+  // Relationships
+  flashcard    Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([flashcardId])
+  @@index([userId])
+  @@map("flashcard_reviews")
+}
+
+// User usage tracking for subscription management
+model UserUsage {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  
+  // Monthly usage counters
+  documentsProcessed Int      @default(0)
+  flashcardsGenerated Int     @default(0)
+  quizzesGenerated   Int      @default(0)
+  quizzesCompleted   Int      @default(0)
+  summariesGenerated Int      @default(0)
+  aiTokensUsed       Int      @default(0)
+  
+  // Usage limits (based on subscription tier)
+  documentsLimit     Int      @default(5)
+  flashcardsLimit    Int      @default(100)
+  quizzesLimit       Int      @default(10)
+  summariesLimit     Int      @default(10)
+  aiTokensLimit      Int      @default(50000)
+  
+  // Reset tracking
+  lastReset          DateTime @default(now())
+  
+  // Relationships
+  user               User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([userId])
+  @@map("user_usage")
+}
+
+// User settings and preferences
+model UserSettings {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  
+  // Profile settings
+  timezone             String   @default("UTC+0")
+  language             String   @default("en")
+  
+  // Notification preferences
+  emailNotifications   Boolean  @default(true)
+  pushNotifications    Boolean  @default(false)
+  studyReminders       Boolean  @default(true)
+  weeklyProgress       Boolean  @default(true)
+  newFeatures          Boolean  @default(false)
+  
+  // Learning preferences
+  defaultDifficulty    String   @default("mixed")
+  autoGenerateFlashcards Boolean @default(true)
+  autoGenerateQuiz     Boolean  @default(true)
+  spacedRepetitionEnabled Boolean @default(true)
+  dailyGoal            Int      @default(30)
+  preferredStudyTime   String   @default("evening")
+  
+  // Privacy settings
+  profileVisible       Boolean  @default(false)
+  shareProgress        Boolean  @default(false)
+  dataCollection       Boolean  @default(true)
+  analytics            Boolean  @default(true)
+  
+  // Appearance settings
+  theme                String   @default("system")
+  compactMode          Boolean  @default(false)
+  animations           Boolean  @default(true)
+  
+  // Setup tracking
+  setupCompleted       Boolean  @default(false)
+  
+  // Relationships
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([userId])
+  @@map("user_settings")
+}
+
+// Enums are represented as strings in SQLite:
+// SubscriptionTier: "FREE", "BASIC", "PREMIUM", "ENTERPRISE"
+// ProcessingStatus: "UPLOADED", "PROCESSING", "COMPLETED", "FAILED" 
+// Difficulty: "EASY", "MEDIUM", "HARD"
+// Theme: "light", "dark", "system"
+// Language: "en", "es", "fr", "de", "ja"
+// Timezone: "UTC-8", "UTC-5", "UTC+0", "UTC+1", "UTC+9", etc.
+// PreferredStudyTime: "morning", "afternoon", "evening", "night"
