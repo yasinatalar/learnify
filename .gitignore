@@ -4,6 +4,7 @@
 /node_modules
 /.claude
 /.vscode
+/PRPs
 /.pnp
 .pnp.*
 .yarn/*
@@ -24,6 +25,8 @@
 
 # misc
 .DS_Store
+CLAUDE.md
+INITIAL.md
 *.pem
 
 # debug
