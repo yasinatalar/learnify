@@ -120,7 +120,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is copyrighted and can't be used for any purpose other than reviewing at all. - see the [LICENSE](LICENSE) file for details.
 
 ## Support
 
