@@ -134,6 +134,9 @@ For support, email yasinatalar@proton.me or join our [Discord community](https:/
 ### Upload Documents
 <img width="1689" height="865" alt="Bildschirmfoto 2025-07-14 um 11 30 41" src="https://github.com/user-attachments/assets/4077ab98-c26a-47f2-9cc5-7c5e1c7b2968" />
 
+### Document Processing
+<img width="1694" height="867" alt="image" src="https://github.com/user-attachments/assets/c652ccac-79d1-4a76-9d7b-45edbd3d22fe" />
+
 ### Flashcards
 <img width="1692" height="866" alt="image" src="https://github.com/user-attachments/assets/355facd8-c165-4218-b030-17419fd6fc4a" />
 
@@ -144,7 +147,7 @@ For support, email yasinatalar@proton.me or join our [Discord community](https:/
 <img width="1691" height="867" alt="image" src="https://github.com/user-attachments/assets/e7acab61-c268-40db-9f1c-31d6136d64d3" />
 
 ### Summaries
-<img width="1691" height="868" alt="image" src="https://github.com/user-attachments/assets/b9708de2-6228-48c8-b8c3-3afb685e2de1" />
+<img width="1693" height="866" alt="image" src="https://github.com/user-attachments/assets/38370368-b09f-4c6e-80c7-8e5c2ecd428a" />
 
 ### Analytics
 <img width="1692" height="867" alt="image" src="https://github.com/user-attachments/assets/fccc9ad8-e1a9-401c-b311-7c9f168e8bc3" />
@@ -153,7 +156,8 @@ For support, email yasinatalar@proton.me or join our [Discord community](https:/
 <img width="1691" height="866" alt="image" src="https://github.com/user-attachments/assets/0cb7e924-e072-42b5-b5ca-83c5b152014e" />
 
 ### Exported Document
-<img width="1457" height="868" alt="image" src="https://github.com/user-attachments/assets/851ded71-91ae-4e98-abf3-3c1a4962bd02" />
+<img width="1457" height="868" alt="image" src="https://github.com/user-attachments/assets/51dc806b-1dfb-41f3-b6db-c76967293b69" />
+
 
 
 
