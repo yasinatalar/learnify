@@ -126,8 +126,44 @@ This project is copyrighted and can't be used for any purpose other than reviewi
 
 For support, email yasinatalar@proton.me or join our [Discord community](https://discord.gg/learnifyai).
 
+## Gallery
+
+### Dashboard
+<img width="1690" height="867" alt="Bildschirmfoto 2025-07-14 um 11 29 21" src="https://github.com/user-attachments/assets/6639e78e-896e-4318-bbfd-96e9f9b43c05" />
+
+### Upload Documents
+<img width="1689" height="865" alt="Bildschirmfoto 2025-07-14 um 11 30 41" src="https://github.com/user-attachments/assets/4077ab98-c26a-47f2-9cc5-7c5e1c7b2968" />
+
+### Flashcards
+<img width="1692" height="866" alt="image" src="https://github.com/user-attachments/assets/355facd8-c165-4218-b030-17419fd6fc4a" />
+
+### Flashcard Reviews
+<img width="1678" height="868" alt="image" src="https://github.com/user-attachments/assets/cfa6ca1c-eca7-4927-9bef-62fe09fb4a10" />
+
+### Quizzes
+<img width="1691" height="867" alt="image" src="https://github.com/user-attachments/assets/e7acab61-c268-40db-9f1c-31d6136d64d3" />
+
+### Summaries
+<img width="1691" height="868" alt="image" src="https://github.com/user-attachments/assets/b9708de2-6228-48c8-b8c3-3afb685e2de1" />
+
+### Analytics
+<img width="1692" height="867" alt="image" src="https://github.com/user-attachments/assets/fccc9ad8-e1a9-401c-b311-7c9f168e8bc3" />
+
+### Export
+<img width="1691" height="866" alt="image" src="https://github.com/user-attachments/assets/0cb7e924-e072-42b5-b5ca-83c5b152014e" />
+
+### Exported Document
+<img width="1457" height="868" alt="image" src="https://github.com/user-attachments/assets/851ded71-91ae-4e98-abf3-3c1a4962bd02" />
+
+
+
+
+
+
+
 ---
 
 Made with ❤️ by Yasin Atalar
+
 
 © 2025 Yasin Atalar. All rights reserved.
